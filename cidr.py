@@ -28,15 +28,19 @@ class CIDRKits:
                 # Basic Info
                 output = 'Net Cnt Total: {}\nHostCnt / Net: {}\nHosts are as below:\n'\
                     .format(2**net_bits, 2**host_bits - 2 if host_bits else 0)
-                output += "Idx,    Network,     Boardcase\n"
+                output += "       Idx.     Network       , Boardcast\n"
 
-                # Hosts Info (0-15 + lastone)
+                # Hosts Info (No. 0-15 + last one)
                 net2brd_dis = 2**host_bits - 1
                 it = network.subnets(prefixlen_diff=net_bits)
                 for idx, row in zip(range(16), it):
-                    output += "{}. {}, {}\n".format(idx, row, row.network_address + net2brd_dis if host_bits else '-')
+                    output += '{:>10d}. {:<18s}, {:<15s}\n'.format(
+                        idx, str(row), str(row.network_address + net2brd_dis) if host_bits else '-'
+                    )
                 if net_bits > 4:
-                    output += "...\n{}. {}\n".format(2 ** net_bits - 1, brd_cst - 2**host_bits + 1)
+                    output += '                  ...\n{:>10d}. {:<18s}, {}\n'.format(
+                        2 ** net_bits - 1, str(brd_cst - 2**host_bits + 1), str(brd_cst) if host_bits else '-'
+                    )
             else:
                 output = ''
         except:
@@ -50,8 +54,8 @@ class CIDRKits:
         root = tk.Tk()
         root.title('CIDR Kits')
         root.geometry('600x300')
-        root.wm_minsize(800, 800)
-        root.wm_maxsize(800, 800)
+        root.wm_minsize(800, 760)
+        root.wm_maxsize(800, 760)
         root.configure(background='white')
         font = tkfont.Font(size=20, family='Consolas')
 
