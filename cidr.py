@@ -9,12 +9,11 @@ class CIDRKits:
             network = ip.ip_interface(self.var['network'].get()).network
             netmask = ip.ip_interface(self.var['network'].get()).netmask
             prefixlen = ip.ip_network(network).prefixlen
+            netaddr = network.network_address
+            brd_cst = ip.ip_network(network).broadcast_address
+            host_cnt = ip.ip_network(network).num_addresses - 2
 
             if self.var['prefixlen'].get() == '':
-                netaddr = network.network_address
-                brd_cst = ip.ip_network(network).broadcast_address
-                host_cnt = ip.ip_network(network).num_addresses - 2
-
                 output = 'Netmask: {}\nNetwork: {}\n1stHost: {}\nLstHost: {}\nBrd Cst: {}\nHostCnt: {}\n' \
                     .format(netmask, network,
                             (netaddr + 1 if host_cnt > 0 else '-'),
@@ -37,8 +36,7 @@ class CIDRKits:
                 for idx, row in zip(range(16), it):
                     output += "{}. {}, {}\n".format(idx, row, row.network_address + net2brd_dis if host_bits else '-')
                 if net_bits > 4:
-                    *_, lastone = it
-                    output += "...\n{}. {}\n".format(2**net_bits-1, lastone)
+                    output += "...\n{}. {}\n".format(2 ** net_bits - 1, brd_cst - 2**host_bits + 1)
             else:
                 output = ''
         except:
