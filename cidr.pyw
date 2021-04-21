@@ -3,6 +3,13 @@ import ipaddress as ip
 
 class CIDRKits:
     @staticmethod
+    def get_network_cast(net: ip.IPv4Address):
+        return \
+            'Unicast' if ip.IPv4Address('1.1.1.1') <= net <= ip.IPv4Address('223.255.255.255') else \
+            'Multicast' if ip.IPv4Address('224.0.0.0') <= net <= ip.IPv4Address('239.255.255.255') else \
+            'Limited Broadcast (local broadcast)' if net == ip.IPv4Address('255.255.255.255') else "Undefined"
+
+    @staticmethod
     def get_network_class(net: ip.IPv4Network):
         return \
             'A' if ip.ip_network('0.0.0.0/1').supernet_of(net) else \
@@ -18,15 +25,17 @@ class CIDRKits:
         brd_cst = ip.ip_network(network).broadcast_address
         host_cnt = ip.ip_network(network).num_addresses - 2
 
-        return 'Netmask: {}\nNetwork: {}\n1stHost: {}\nLstHost: {}\nBrd Cst: {}\nHostCnt: {}\nIPClass: {}\n' \
+        return 'Netmask: {}\nNetwork: {}\n1stHost: {}\nLstHost: {}\nBrd Cst: {}\nHostCnt: {}' \
+               '\nIPClass: Class {}\nCst Typ: {}' \
             .format(netmask, network,
                     (netaddr + 1 if host_cnt > 0 else '-'),
                     (brd_cst - 1 if host_cnt > 0 else '-'),
                     (brd_cst if host_cnt >= 0 else '-'),
                     (host_cnt if host_cnt > 0 else 0),
                     CIDRKits.get_network_class(network)
-                    + (' Private' if network.is_private else ' Public')
+                    + (', Private' if network.is_private else ', Public')
                     + (' (Lookback)' if network.is_loopback else ''),
+                    CIDRKits.get_network_cast(netaddr),
                     )
 
     @staticmethod
