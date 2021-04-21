@@ -34,7 +34,7 @@ class CIDRKits:
                     (host_cnt if host_cnt > 0 else 0),
                     CIDRKits.get_network_class(network)
                     + (', Private' if network.is_private else ', Public')
-                    + (' (Lookback)' if network.is_loopback else ''),
+                    + (' (Loopback)' if network.is_loopback else ''),
                     CIDRKits.get_network_cast(netaddr),
                     )
 
